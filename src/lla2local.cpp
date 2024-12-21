@@ -50,11 +50,11 @@ Lla2Local::Lla2Local() : Node("Lla2Local")
   originLat_ = originLatDeg * (M_PI / 180.0);
   originLon_ = originLonDeg * (M_PI / 180.0);
 
-  localXyPub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("local_xy", 10);
+  localXyPub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("local_east_north", 10);
   auto qos = rclcpp::SensorDataQoS();
   gpsSub_ = this->create_subscription<sensor_msgs::msg::NavSatFix>
     ("fix", qos, std::bind(&Lla2Local::GPSCallback, this, _1 ));
-  gpsMonPub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>("local_xy_mon", 10);
+  gpsMonPub_ = this->create_publisher<sensor_msgs::msg::NavSatFix>("lla_mon", 10);
 
   RCLCPP_INFO(this->get_logger(), "lla2local is running");
   RCLCPP_INFO(this->get_logger(), "using origin lat %f lon %f", originLatDeg, originLonDeg);
@@ -62,8 +62,8 @@ Lla2Local::Lla2Local() : Node("Lla2Local")
 
 void Lla2Local::GPSCallback(const sensor_msgs::msg::NavSatFix& msg)
 {
-  RCLCPP_DEBUG(this->get_logger(), "Got data from GNSS (lat, lon, alt): %f, %f, %f"
-    , msg.latitude, msg.longitude, msg.altitude);
+  RCLCPP_DEBUG(this->get_logger(), "Got data from GNSS (lat, lon): %f, %f"
+    , msg.latitude, msg.longitude);
 
   gpsMonPub_->publish(msg);   // publish a copy of NavSatFix for monitoring/bagging
 
