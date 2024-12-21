@@ -7,11 +7,15 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
-add_executable(lla2local src/lla2local.cpp)
+include_directories(include/lla2local)
+
+add_executable(lla2local src/main.cpp src/lla2local.cpp)
+ament_target_dependencies(lla2local rclcpp sensor_msgs geometry_msgs)
+
 target_include_directories(lla2local PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
